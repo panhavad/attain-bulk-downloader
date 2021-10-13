@@ -5,7 +5,7 @@ import wget
 import os
 
 course_id = 515344
-init_lesson_id = 9461810
+init_lesson_id = 9461809 #IMPORTANT CHANGE HERE
 login_cookie_value = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhY2Nlc3MiLCJpYXQiOjE2MzQxMTY2MTAsImp0aSI6IjljN2YzMjJmLWJiYjEtNDg5NC04MTdiLTk4MjE3MWMxMGJiZiIsImlzcyI6InNrX3ZoZHQyamh4Iiwic3ViIjoiOWZiNTEwZTQtNTFlOS00M2EyLTg1OWUtZmE3NTMzNzU0NDA5In0.z7gNsHE6GTMjEJndGOO_1AN6RVRowVSFvhFQPUnB3kU'
 continue_flag = False
 
