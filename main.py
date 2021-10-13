@@ -35,6 +35,8 @@ for each_lesson_title in set_of_lesson_titles:
     res_lesson_title = each_lesson_title.text.strip()
     print(res_lesson_title)
     lesson_links = each_lesson_title.findNext('ul').find_all('a')
+    num_lesson = 1
+
     for each_lesson_link in lesson_links:
         res_lesson_id = each_lesson_link.get('data-ss-lecture-id')
         # print(res_lesson_id)
@@ -51,7 +53,7 @@ for each_lesson_title in set_of_lesson_titles:
         # wistia_id_element = in_lesson.find({'data-wistia-id': True})
         wistia_id_element = in_lesson.find(
             lambda tag: 'data-wistia-id' in tag.attrs)
-
+        
         if wistia_id_element:
             res_wistia_id = wistia_id_element.get('data-wistia-id')
             res_wistia_url = to_url([res_wistia_id], 'wistia')
@@ -59,13 +61,14 @@ for each_lesson_title in set_of_lesson_titles:
             in_wistia = json.loads(to_wistia.text)
             to_download_url = in_wistia['media']['assets'][0]['url']
             res_filename = in_wistia['media']['name']
-            to_directory = base_dir + '\\downloaded' + \
+            to_directory = base_dir + '\\downloaded\\' + \
                 str(course_id) + '\\' + \
                 ''.join(x for x in res_lesson_title if x.isalnum())
             if not os.path.exists(to_directory):
                 os.makedirs(to_directory)
-            wget.download(to_download_url, to_directory + '\\' + res_filename)
+            wget.download(to_download_url, to_directory + '\\' + str(num_lesson) + '. ' + res_filename)
             print('\n')
-            print('-------Downloaded to-->', res_wistia_url,
-                  '---->', to_directory + '\\' + res_filename)
+            print('#Downloaded to -->', res_wistia_url,
+                  '-->', to_directory + '\\' + str(num_lesson) + '. ' + res_filename)
+            num_lesson += 1
             print('\n')
