@@ -30,6 +30,12 @@ def to_url(payload, target):
             str(payload[0]) + '.json'
     return url
 
+def name_compact_name(the_string):
+    remove_characters = ['\\','/',':','*','?','"','<','>','|']
+    for character in remove_characters:
+        the_string = the_string.replace(character, "")
+    return the_string
+
 ses = requests.session()
 ses.cookies.set('sk_vhdt2jhx_access', login_cookie_value, domain='attain-online-japanese.teachable.com')
 
@@ -72,15 +78,16 @@ for each_lesson_title in set_of_lesson_titles:
                 to_wistia = requests.get(res_wistia_url)
                 in_wistia = json.loads(to_wistia.text)
                 to_download_url = in_wistia['media']['assets'][0]['url']
-                res_filename = in_wistia['media']['name']
                 to_directory = base_dir + '\\downloaded\\' + \
                     str(course_id) + '\\' + \
-                    ''.join(x for x in res_lesson_title if x.isalnum())
+                    name_compact_name(res_lesson_title)
+                res_filename = name_compact_name(res_current_lesson_name) + '.mp4'
+                res_end_path = to_directory + '\\' + str(num_lesson) + '. ' + res_filename
                 if not os.path.exists(to_directory):
                     os.makedirs(to_directory)
-                wget.download(to_download_url, to_directory + '\\' + str(num_lesson) + '. ' + res_filename)
+                wget.download(to_download_url, res_end_path)
                 print('\n')
                 print('#Downloaded to -->', res_wistia_url,
-                    '-->', to_directory + '\\' + str(num_lesson) + '. ' + res_filename)
+                    '-->', res_end_path)
                 num_lesson += 1
                 print('\n')
