@@ -4,16 +4,19 @@ import json
 import wget
 import os
 
-course_id = 515344
-init_lesson_id = 9461809 #IMPORTANT CHANGE HERE
+course_id = int(input("Target Course ID: "))
+init_lesson_id = int(input("Target Initial Lesson ID: "))
 login_cookie_value = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhY2Nlc3MiLCJpYXQiOjE2MzQxMTY2MTAsImp0aSI6IjljN2YzMjJmLWJiYjEtNDg5NC04MTdiLTk4MjE3MWMxMGJiZiIsImlzcyI6InNrX3ZoZHQyamh4Iiwic3ViIjoiOWZiNTEwZTQtNTFlOS00M2EyLTg1OWUtZmE3NTMzNzU0NDA5In0.z7gNsHE6GTMjEJndGOO_1AN6RVRowVSFvhFQPUnB3kU'
 continue_flag = False
+hack_val = 1
 
 base_dir = os.path.abspath(os.getcwd())
 # print(base_dir)
 
 def check_cont_flag(current_lesson_id):
     if int(current_lesson_id) == init_lesson_id:
+        global hack_val
+        hack_val = 0
         return True
     else:
         return False
@@ -26,7 +29,6 @@ def to_url(payload, target):
         url = 'https://fast.wistia.com/embed/medias/' + \
             str(payload[0]) + '.json'
     return url
-
 
 ses = requests.session()
 ses.cookies.set('sk_vhdt2jhx_access', login_cookie_value, domain='attain-online-japanese.teachable.com')
@@ -41,10 +43,13 @@ for each_lesson_title in set_of_lesson_titles:
     print(res_lesson_title)
     lesson_links = each_lesson_title.findNext('ul').find_all('a')
     num_lesson = 1
-
+    
     for each_lesson_link in lesson_links:
         res_lesson_id = each_lesson_link.get('data-ss-lecture-id')
-        continue_flag = check_cont_flag(res_lesson_id)
+        
+        if hack_val:
+            continue_flag = check_cont_flag(res_lesson_id)
+
         if continue_flag:
             res_lesson_url = to_url([course_id, res_lesson_id], 'base')
             to_lesson = ses.get(res_lesson_url, timeout=(3.05, 27))
