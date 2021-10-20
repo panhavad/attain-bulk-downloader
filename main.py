@@ -6,7 +6,7 @@ import os
 
 course_id = int(input("Target Course ID: "))
 init_lesson_id = int(input("Target Initial Lesson ID: "))
-login_cookie_value = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhY2Nlc3MiLCJpYXQiOjE2MzQyMjY5NTgsImp0aSI6IjU2MDhmN2E0LWY5MjAtNDk0MC05YjM0LTI4NTVkMjdhMTgwNiIsImlzcyI6InNrX3ZoZHQyamh4Iiwic3ViIjoiMmZiOGFkN2MtMWQyMS00MGY4LTgyYWEtMzgxZDY3ZGUyMDEzIn0.tIdrZ2yPgECmqjBa9AZP12KsLWJg3l28TCvjfM_X4V0'
+login_cookie_value = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhY2Nlc3MiLCJpYXQiOjE2MzQ0NjkyNjEsImp0aSI6IjdlNmY0NGJkLWVlNTctNDhmZS1hNDI4LWU0YTEwNGM3OWNlYiIsImlzcyI6InNrX3ZoZHQyamh4Iiwic3ViIjoiMDk2NjhjOWUtNTUzMS00ZTU3LThjMTMtNWMwMzk4YWY4NzI4In0.wZQEdoqpo7gAvCS-cwmYi8_FruxVF3DOJOMwlAMQFBY'
 continue_flag = False
 hack_val = 1
 
@@ -47,9 +47,10 @@ souped_res = BeautifulSoup(res.content.decode('utf-8'), features='lxml')
 
 set_of_lesson_titles = souped_res.find_all('div', attrs={'role': 'heading'})
 res_course_name = name_compact_name(souped_res.find('div', {'class': 'course-sidebar-head'}).find('h2').text)
+res_course_name = (res_course_name[:50] + '[blah blah]') if len(res_course_name) > 50 else res_course_name
 
 for each_lesson_title in set_of_lesson_titles:
-    res_lesson_title = each_lesson_title.text.strip()
+    res_lesson_title = each_lesson_title.text.strip().rstrip(".")
     print(res_lesson_title)
     lesson_links = each_lesson_title.findNext('ul').find_all('a')
     num_lesson = 1
@@ -67,7 +68,9 @@ for each_lesson_title in set_of_lesson_titles:
                 to_lesson.content.decode('utf-8'), features='lxml')
             res_current_lesson_name = name_compact_name(each_lesson_link.find(
                 'span', {'class': 'lecture-name'}).text)
-            print(res_current_lesson_name, res_lesson_url)
+            compact_res_current_lesson_name = (res_current_lesson_name[:50] + '[blah blah]') if len(res_current_lesson_name) > 50 else res_current_lesson_name
+            compact_res_current_lesson_name = compact_res_current_lesson_name.rstrip(".")
+            print(compact_res_current_lesson_name, res_lesson_url)
             # f = open(str(res_lesson_id) + '.html', 'w', encoding='utf-8')
             # f.write(str(in_lesson))
             # f.close()
@@ -97,7 +100,7 @@ for each_lesson_title in set_of_lesson_titles:
                     in_wistia = json.loads(to_wistia.text)
                     to_download_url = in_wistia['media']['assets'][0]['url']
                     
-                    res_filename = name_compact_name(res_current_lesson_name) + '.mp4'
+                    res_filename = name_compact_name(compact_res_current_lesson_name) + '.mp4'
                     res_end_path = to_directory + '\\' + str(num_lesson) + '. ' + res_filename
                     if not os.path.exists(res_end_path):
                         wget.download(to_download_url, res_end_path)
@@ -113,7 +116,7 @@ for each_lesson_title in set_of_lesson_titles:
                 elif pdf_id_element:
                     res_pdf_id = pdf_id_element.get('data-pdfviewer-id')
                     res_pdf_url = to_url([res_pdf_id], 'pdf')
-                    res_filename = name_compact_name(res_current_lesson_name) + '.pdf'
+                    res_filename = name_compact_name(compact_res_current_lesson_name) + '.pdf'
                     res_end_path = to_directory + '\\' + str(num_lesson) + '. ' + res_filename
                     if not os.path.exists(res_end_path):
                         wget.download(res_pdf_url, res_end_path)
